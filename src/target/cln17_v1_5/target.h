@@ -1,4 +1,4 @@
-#define TARGET_CLN17_V1_7
+#define TARGET_CLN17_V1_5
 
 // feature flags
 #define FEATURE_STATUSLED
