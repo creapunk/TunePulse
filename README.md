@@ -8,7 +8,7 @@ For more information, join the creapunk community Discord.
 For specific targets:
 
 ```c
-#define TARGET_CLN17_V1_7 # CLN17 v1.7
+#define TARGET_CLN17_V1_5 # CLN17 v1.5
 #define TARGET_CLN17_V2 # CLN17 v2
 ```
 
