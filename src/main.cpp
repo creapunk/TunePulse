@@ -17,6 +17,17 @@
 #warning "Target: CLN17 v2 not yet implemented"
 #endif
 
-void setup() {}
+void setup() {
+#ifdef FEATURE_STATUSLED
+  pinMode(STATUSLED_PIN, OUTPUT);
+#endif
+}
 
-void loop() {}
+void loop() {
+#ifdef FEATURE_STATUSLED
+  digitalWrite(STATUSLED_PIN, HIGH);
+  delay(500);
+  digitalWrite(STATUSLED_PIN, LOW);
+  delay(500);
+#endif
+}
