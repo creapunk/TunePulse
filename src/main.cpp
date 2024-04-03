@@ -19,15 +19,15 @@
 
 void setup() {
 #ifdef FEATURE_STATUSLED
-  pinMode(STATUSLED_PIN, OUTPUT);
+  pinMode(PINOUT::LED_BLU, OUTPUT);
 #endif
 }
 
 void loop() {
 #ifdef FEATURE_STATUSLED
-  digitalWrite(STATUSLED_PIN, HIGH);
+  digitalWrite(PINOUT::LED_BLU, HIGH);
   delay(500);
-  digitalWrite(STATUSLED_PIN, LOW);
+  digitalWrite(PINOUT::LED_BLU, LOW);
   delay(500);
 #endif
 }
