@@ -2,12 +2,15 @@
 #include <SPI.h>
 #include <Wire.h>
 
+#include <SimpleFOC.h>
+#include <SimpleFOCDrivers.h>
+
 // This includes the target selected by the PIO build environment
 // The include error can be dismissed until we find a fix for the dev env.
 #include "target.h"
 
-#ifdef TARGET_CLN17_V1_7
-#warning "Target: CLN17 v1.7 not yet implemented"
+#ifdef TARGET_CLN17_V1_5
+#warning "Target: CLN17 v1.5 not yet implemented"
 #endif
 
 #ifdef TARGET_CLN17_V2
