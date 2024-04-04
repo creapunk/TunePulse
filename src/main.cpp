@@ -13,21 +13,15 @@
 #warning "Target: CLN17 v1.5 not yet implemented"
 #endif
 
-#ifdef TARGET_CLN17_V2
+#ifdef TARGET_CLN17_V2_0
 #warning "Target: CLN17 v2 not yet implemented"
 #endif
 
 void setup() {
-#ifdef FEATURE_STATUSLED
-  pinMode(PINOUT::LED_BLU, OUTPUT);
-#endif
+  pinMode(PINOUT::LED_GRN, OUTPUT);
 }
 
 void loop() {
-#ifdef FEATURE_STATUSLED
-  digitalWrite(PINOUT::LED_BLU, HIGH);
-  delay(500);
-  digitalWrite(PINOUT::LED_BLU, LOW);
-  delay(500);
-#endif
+  digitalToggle(PINOUT::LED_GRN);
+  delay(100);
 }

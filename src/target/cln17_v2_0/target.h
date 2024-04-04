@@ -1,15 +1,9 @@
-#define TARGET_CLN17_V2
+#define TARGET_CLN17_V2_0
 
 // Libraries
 #include "Arduino.h"
 
 // feature flags
-#define FEATURE_STATUSLED
-#define STATUSLED_PIN (PB13)
-
-// feature flags
-#define FEATURE_STATUSLED
-#define STATUSLED_PIN (PB13)
 
 // pinout
 namespace PINOUT
@@ -59,7 +53,7 @@ namespace PINOUT
     constexpr PinName ISEN_A = PA_3;
     constexpr PinName ISEN_B = PB_0;
 
-    constexpr PinName DRV_RST = PA_2;
+    constexpr PinName DRV_RST = PB_2;
     constexpr PinName DRV_ERR = PB_1;
 
     constexpr PinName DRV_EN = PA_4;

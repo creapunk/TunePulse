@@ -4,8 +4,6 @@
 #include "Arduino.h"
 
 // feature flags
-#define FEATURE_STATUSLED
-#define STATUSLED_PIN (PB13)
 
 // pinout
 namespace PINOUT
