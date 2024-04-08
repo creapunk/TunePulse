@@ -17,6 +17,9 @@ Its primary goal is to advance the development of closed-loop systems and simpli
 > **Note: This firmware is under heavy development and currently has no documentation.
 For more information, join the creapunk community [Discord](https://discord.gg/V4aJdTja8v).**
 
+## STRUCTURE
+
+![](./assets/TunePulseDiagram.png)
 
 ## SETUP
 
