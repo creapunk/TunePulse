@@ -2,41 +2,19 @@
 #define GENERIC_DRIVER_H
 
 #include <inttypes.h>
+#include "../ErrorHandler.h"
 
 // @todo
-#define supported_motors 0  // Placeholder for specifying the types of motors supported (e.g., DC, Stepper)
-#define control_interface 0 // Placeholder for specifying the type of control interface
+
 #define current_limit 0     // Placeholder for specifying the default current limit
-
-// A union to manage driver error states through both individual flags and a collective integer.
-union DriverError {
-    struct ErrorFlags
-    {
-        uint32_t overCurrent : 1;
-        uint32_t overVoltage : 1;
-        uint32_t underVoltage : 1;
-        uint32_t overTemperature : 1;
-        uint32_t initializationFailure : 1;
-        // @todo: Future expansion: Add additional error types here.
-        uint32_t reserved : 27; // Reserved bits (27 bits) for future use or to align the struct to 32 bits.
-    } flags;
-    uint32_t error; // Allows reading or writing all error flags as a single 32-bit integer for efficiency.
-
-    // Constructor initializes all error flags to 0 (indicating no error) by default.
-    DriverError() : error(0) {}
-};
 
 class GenericMotorDriver
 {
-  protected:
-    uint8_t temperature; // Stores the current temperature reading from the motor or driver
-
-    // Monitors the current through each phase (A, B, C, D) for feedback control or diagnostics
-    int16_t currentA, currentB, currentC, currentD;
-
-    DriverError errorFlag; // Stores general and specific error flags, essential for fault detection and handling
-
   public:
+    virtual void init() = 0;
+
+    uint32_t getSupportedMotors();
+
     ////////// Chopper Control //////////
     // Output PWM frequency in Hz
     virtual void setPWMFrequency(uint32_t frequency) = 0;
@@ -89,7 +67,21 @@ class GenericMotorDriver
     // Temperature reading from the motor or driver
     virtual uint8_t getTemperature() = 0;
     // Error flags and fault detection
-    virtual DriverError getErrorFlag() = 0;
+    virtual ERROR::DriverError getErrorFlag() = 0;
+
+  protected:
+    uint8_t temperature; // Stores the current temperature reading from the motor or driver
+
+    // Monitors the current through each phase (A, B, C, D) for feedback control or diagnostics
+    int16_t currentA, currentB, currentC, currentD;
+
+    ERROR::DriverError errorFlag; // Stores general and specific error flags, essential for fault detection and handling
+
+    uint32_t supportedMotors; // Stores all possible configurations of motor type and motor connection
 };
+
+uint32_t GenericMotorDriver::getSupportedMotors() {
+  return supportedMotors;
+}
 
 #endif

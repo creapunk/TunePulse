@@ -1,4 +1,6 @@
-enum MotorType // uint32_t
+#include <inttypes.h>
+
+enum MOTOR_TYPE : uint32_t // uint32_t
 {
     // DC connection patterns
     M_DC = 0x1 << 0,      // DC motor base type

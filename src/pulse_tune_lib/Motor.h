@@ -1,10 +1,14 @@
-#include "./motor_control/MotorTypeConnectionVariants.h"
+#ifndef MOTOR_H
+#define MOTOR_H
+
 #include <inttypes.h>
 
-class GenericMotor
+#include "./motor_control/MotorTypeConnectionVariants.h"
+
+class Motor
 {
   protected:
-    MotorType motorType;
+    MOTOR_TYPE motorType;
 
     // Electrical properties
     uint16_t resistance;            // mOhm
@@ -20,3 +24,5 @@ class GenericMotor
     // Control properties
     bool direction;
 };
+
+#endif
