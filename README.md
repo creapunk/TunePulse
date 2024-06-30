@@ -36,3 +36,7 @@ For specific features:
 ```c
 // #define FEATURE_CANFD # CAN FD communication
 ```
+
+## Contribution
+
+See `CONTRIBUTION.md`
