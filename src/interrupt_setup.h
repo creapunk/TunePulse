@@ -29,7 +29,7 @@ extern "C" void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim) {
     if (htim->Instance == TIM2) {
         static bool underflow = true;
         if (underflow = !underflow) {
-            TIM2_Set_PWM_Values(MOTOR_CONTROL::pwm.getPwmChannels());
+            TIM2_Set_PWM_Values(MOTOR_CONTROL::pwm.getPwmChannels().asValue().data());
         } else {
             ADC1_StartDMAConversion();
         }
@@ -48,7 +48,6 @@ extern "C" void DMA1_Channel1_IRQHandler(void) {
         ADC_get_values(current_sensor_A, current_sensor_B, MOTOR_CONTROL::voltg_container.voltg_norm, voltage_vref, temperature);
         MOTOR_CONTROL::current_target_polar.ang += 1 << 23;
         // MOTOR_CONTROL::angleRaw += 1 << 24;
-        
 
         MOTOR_CONTROL::voltg_container.voltg_mv = (MOTOR_CONTROL::voltg_container.voltg_norm * 69000) >> 15;  // Danger
         MOTOR_CONTROL::tick();

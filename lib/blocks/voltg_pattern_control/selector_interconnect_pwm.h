@@ -64,37 +64,37 @@
 #include "../data_types.h"
 
 class SelectorInterconnectPwm {
- private:
-  const VoltgChannelslNormlzd&
-      chABCD_;              ///< Reference to the array containing ABCD channels
-  const PatternPWM& mode_;  ///< Reference to the current mode
-  VoltgChannelslNormlzd output = {
-      INT16_MIN};  ///< Array to store the current output pattern
+   private:
+    Input<VoltgChannelslNormlzd> chABCD_;                           ///< Reference to the array containing ABCD channels
+    Input<PatternPWM> mode_;                                        ///< Reference to the current mode
+    Output<VoltgChannelslNormlzd> normalized_voltage{{INT16_MIN}};  ///< Array to store the current output pattern
 
- public:
-  /**
-   * @brief Constructor for SelectorInterconnectPwm.
-   * @param mode Reference to the current mode.
-   * @param chABCD Reference to the input array containing PWM channels.
-   */
-  constexpr SelectorInterconnectPwm(const PatternPWM& mode,
-                                    const VoltgChannelslNormlzd& chABCD)
-      : mode_(mode), chABCD_(chABCD) {}
+   public:
+    /**
+     * @brief Constructor for SelectorInterconnectPwm.
+     * @param mode Reference to the current mode.
+     * @param chABCD Reference to the input array containing PWM channels.
+     */
+    constexpr SelectorInterconnectPwm(const Input<PatternPWM> mode, const Input<VoltgChannelslNormlzd> chABCD)
+        : mode_(mode), chABCD_(chABCD) {}
 
-  /**
-   * @brief Updates the output pattern based on the current mode.
-   */
-  void tick() {
-    for (uint8_t i = 0; i < 4; i++) {
-      output[i] = chABCD_[(mode_ >> (i * 2)) & 0b11];
+    /**
+     * @brief Updates the output pattern based on the current mode.
+     */
+    void tick() {
+        // for (uint8_t i = 0; i < 4; i++) {
+        //     normalized_voltage[i] = chABCD_[(mode_ >> (i * 2)) & 0b11];
+        // }
+
+        normalized_voltage = {chABCD_[(mode_ >> (0 * 2)) & 0b11], chABCD_[(mode_ >> (1 * 2)) & 0b11],
+                              chABCD_[(mode_ >> (2 * 2)) & 0b11], chABCD_[(mode_ >> (3 * 2)) & 0b11]};
     }
-  }
 
-  /**
-   * @brief Returns the current PWM channels.
-   * @return Reference to the array of current PWM channels.
-   */
-  const VoltgChannelslNormlzd& getPwmChannels() const { return output; }
+    /**
+     * @brief Returns the current PWM channels.
+     * @return Reference to the array of current PWM channels.
+     */
+    const Input<VoltgChannelslNormlzd> getPwmChannels() const { return normalized_voltage; }
 };
 
 #endif  // SELECTOR_INTERCONNECT_PWM_H
