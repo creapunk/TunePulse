@@ -8,5 +8,7 @@
 #include "module_pwm_driver.h"
 #include "block_absolute_position.h"
 #include "voltage_estimation.h"
+#include "motion_plan_trapezoidal.h"
+#include "motion_plan_scurve.h"
 
 #endif  // BLOCK_LIB_H
