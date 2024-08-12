@@ -17,8 +17,12 @@
 void NVIC_Init() {
     /* DMA interrupt init */
     /* DMA1_Channel1_IRQn interrupt configuration */
-    NVIC_SetPriority(DMA1_Channel1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), DMA_ADC_PRIORITY, 0));
+    NVIC_SetPriority(DMA1_Channel1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), DMA_CH1_INT_PRIORITY, 0));
     NVIC_EnableIRQ(DMA1_Channel1_IRQn);
+
+    /* SPI1 interrupt init */
+    NVIC_SetPriority(SPI1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), SPI1_INT_PRIORITY, 0));
+    NVIC_EnableIRQ(SPI1_IRQn);
 
     /* PWM TIM2 interrupt Init */
     HAL_NVIC_SetPriority(TIM2_IRQn, TIM2_INT_PRIORITY, 0);
@@ -48,7 +52,6 @@ extern "C" void DMA1_Channel1_IRQHandler(void) {
         ADC_get_values(current_sensor_A, current_sensor_B, MOTOR_CONTROL::voltg_container.voltg_norm, voltage_vref, temperature);
         MOTOR_CONTROL::current_target_polar.ang += 1 << 23;
         // MOTOR_CONTROL::angleRaw += 1 << 24;
-        
 
         MOTOR_CONTROL::voltg_container.voltg_mv = (MOTOR_CONTROL::voltg_container.voltg_norm * 69000) >> 15;  // Danger
         MOTOR_CONTROL::tick();
