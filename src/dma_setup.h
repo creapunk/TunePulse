@@ -13,7 +13,6 @@ inline void DMA_Clock_Init(void) {
     /* DMA controller clock enable */
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMAMUX1);
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
-
 }
 
 inline void DMA_ADC_Init(uint16_t* buffer, uint32_t buffer_size) {

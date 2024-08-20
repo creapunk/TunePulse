@@ -6,6 +6,8 @@
 #include "stm32g4xx_ll_gpio.h"
 #include "stm32g4xx_ll_spi.h"
 
+extern void ENCODER_Callback();
+
 uint16_t SPI1_tx_buffer[] = {0x8020, 0};
 volatile uint16_t SPI1_rx_buffer[] = {0, 0};
 
@@ -13,6 +15,8 @@ volatile uint8_t SPI1_tx_buffer_index = 0;
 volatile uint8_t SPI1_rx_buffer_index = 0;
 
 volatile bool SPI1_busy = false;
+
+volatile uint16_t POSITION_ENCODER = 0;
 
 void SPI1_Init() {
     LL_SPI_InitTypeDef SPI_InitStruct = {0};
@@ -51,9 +55,8 @@ void SPI1_Start() {
 
 void SPI1_StartTransfer() {
     // If SPI is still busy with the previous request, just exit
-    if (SPI1_busy) {
+    if (SPI1_busy)
         return;
-    }
 
     SPI1_rx_buffer_index = 0;
     SPI1_tx_buffer_index = 0;
@@ -73,7 +76,11 @@ extern "C" void SPI1_IRQHandler(void) {
             // Try to uncomment the following line if you see any signs of data corruption
             // while (LL_SPI_IsActiveFlag_BSY(SPI1));
             SPI1_ChipSelect(false);
+            POSITION_ENCODER = SPI1_rx_buffer[1] << 1;
             SPI1_busy = false;
+
+            ENCODER_Callback();
+
         } else {
             LL_SPI_EnableIT_TXE(SPI1);
         }
@@ -81,15 +88,8 @@ extern "C" void SPI1_IRQHandler(void) {
     /* Check RXNE flag value in ISR register */
     else if (LL_SPI_IsActiveFlag_TXE(SPI1)) {
         LL_SPI_TransmitData16(SPI1, SPI1_tx_buffer[SPI1_tx_buffer_index++]);
-
         LL_SPI_DisableIT_TXE(SPI1);
     }
-    /* Check STOP flag value in ISR register */
-    /*
-    else if (LL_SPI_IsActiveFlag_OVR(SPI1)) {
-        // Call Error function
-    }
-    */
 }
 
 #endif  // SPI_SETUP_H
