@@ -50,20 +50,27 @@ Next in VSCode, we can set up flashing to this device with the command: `Platfor
 
 Once this is completed, simply running `PlatformIO: Upload` will upload the built code straight onto the device.
 
-## Target defines
+## DEBUGGING
 
-For specific targets:
+### Using SWD over USB with STMViewer
 
-```c
-#define TARGET_CLN17_V1_5 # CLN17 v1.5
-#define TARGET_CLN17_V2 # CLN17 v2
-```
+- [Debugger](https://hackaday.io/project/192857-swd-over-usb-type-c-new-way-of-programming-boards)
+- [STMViewer](https://github.com/klonyyy/STMViewer)
 
-For specific features:
+![STMViewer Overview](https://cdn.hackaday.io/images/original/8468041693931987527.gif)
 
-```c
-// #define FEATURE_CANFD # CAN FD communication
-```
+1. **Connections**: Use two USB cables — one (full-featured) connects to the driver (STM32 board), and the other (USB2.0 or higher) connects from the  ST-Link labeled connector to your computer. **Cable orientation is crucial** only for the one connected to the driver (STM32 board).
+
+2. **Real-Time Debugging**: STMViewer allows you to connect to the target system and modify variable values **without needing to reflash** the device. This feature speeds up testing and iteration.
+
+3. **Visualizing Variables**: You can visualize **all modifiable variables** in real-time, making it easier to identify and correct issues during development.
+
+> **Note:** Update speed is limited ~250-500Hz. 
+
+
+
+
+
 
 ## Contribution
 

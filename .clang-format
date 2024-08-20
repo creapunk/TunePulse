@@ -1,2 +1,7 @@
 ---
 BasedOnStyle: Chromium
+
+ColumnLimit: 130
+IndentWidth: 4
+AllowShortLoopsOnASingleLine: true
+AccessModifierOffset: -4

@@ -3,11 +3,10 @@
 
 #include "generic_block.h"
 
-enum ModePWM : uint8_t { ALLIGNED_GND = 0, ALLIGNED_VCC = 1 };
 
 class ModuleDriverPWM {
   BLOCK_INPUT(ModePWM, mode);
-  const int16_t (&ch1234_)[4];
+  const VoltgChannelslNormlzd& ch1234_;
   BLOCK_INPUT(int16_t, sup_voltg);
   BLOCK_INPUT(int16_t, pwm_res);
   int16_t duty[4] = {0};
@@ -19,7 +18,7 @@ class ModuleDriverPWM {
   ModuleDriverPWM(const ModePWM& mode,
                   const int16_t& pwm_resolution,
                   const int16_t& sup_voltage,
-                  const int16_t (&ch1234)[4])
+                  const VoltgChannelslNormlzd& ch1234)
       : mode_(mode),
         ch1234_(ch1234),
         sup_voltg_(sup_voltage),
@@ -33,7 +32,7 @@ class ModuleDriverPWM {
     }
   }
 
-  constexpr const int16_t (&getPwmChannels() const)[4] { return duty; }
+  constexpr const VoltgChannelslNormlzd& getPwmChannels() const { return duty; }
 };
 
 #endif  // MODULE_PWM_DRIVER_H

@@ -11,31 +11,11 @@
 
 #include <float.h>
 #include <inttypes.h>
+#include "control_modes.h"
 
-// ################### MACROS #################################
+#include "data_types.h"
 
-/**
- * @brief Macro to define an input channel in a Block.
- * This macro creates a protected const reference to an input variable.
- * @param type The data type of the input.
- * @param name The name of the input variable.
- */
-#define BLOCK_INPUT(type, name) \
- protected:                     \
-  const type& name##_;
 
-/**
- * @brief Macro to define an output channel in a Block.
- * This macro creates a protected reference to an output variable.
- * @param type The data type of the output.
- * @param name The name of the output variable.
- */
-#define BLOCK_OUTPUT(type, name) \
- protected:                      \
-  type name##_;                  \
-                                 \
- public:                         \
-    const type& get_##name() const { return name##_; }
 
 // ################### GENERIC BLOCK #################################
 
@@ -55,5 +35,32 @@ class Block {
    */
   virtual void tick() = 0;
 };
+
+// ################### MACROS #################################
+
+/**
+ * @brief Macro to define an input channel in a Block.
+ * This macro creates a protected const reference to an input variable.
+ * @param type The data type of the input.
+ * @param name The name of the input variable.
+ */
+#define BLOCK_INPUT(type, name) \
+ protected:                     \
+  const type& name##_;
+
+/**
+ * @brief Macro to define an output channel in a Block.
+ * This macro creates a protected reference to an output variable.
+ * @param type The data type of the output.
+ * @param name The name of the output variable.
+ */
+#define BLOCK_OUTPUT(type, name)   \
+ protected:                        \
+  type name##_;                    \
+                                   \
+ public:                           \
+  const type& get_##name() const { \
+    return name##_;                \
+  }
 
 #endif  // GENERIC_BLOCK_H

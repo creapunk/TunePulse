@@ -18,6 +18,13 @@
 
 #include "generic_block.h"
 
+struct ControllerPIDFF_Setting {
+  int16_t Kp;
+  int16_t Ki;
+  int16_t Kd;
+  int16_t Kff;
+};
+
 /**
  * @brief PID Controller with Feed-Forward Correction
  * This class implements a PID controller with an additional feed-forward term.
@@ -25,18 +32,17 @@
  * @param error An result of the controller's error calculation.
  * @param output An result of the controller's output calculation.
  */
-class Controller_PID_FF : public Block {
+class ControllerPIDFF : public Block {
   BLOCK_INPUT(int32_t, actual);       // The measured process variable
   BLOCK_INPUT(int32_t, reference);    // The reference value (setpoint)
   BLOCK_INPUT(int32_t, feedforward);  // The feed-forward term
-  BLOCK_INPUT(int32_t, Kp);     // Proportional coefficient (multiplied by 1000)
-  BLOCK_INPUT(int32_t, Ki);     // Integral coefficient (multiplied by 1000)
-  BLOCK_INPUT(int32_t, Kd);     // Derivative coefficient (multiplied by 1000)
-  BLOCK_INPUT(int32_t, Kff);    // Feed-forward coefficient (multiplied by 1000)
-  BLOCK_INPUT(int32_t, limit);  // The output limit
-  BLOCK_OUTPUT(int32_t,
-               output);          // The variable where the output will be stored
-  BLOCK_OUTPUT(int32_t, error);  // The variable where the error will be stored
+  BLOCK_INPUT(int32_t, limit);           // The output limit
+
+  const ControllerPIDFF_Setting& coef_;  // PIDFF coeffs multiplied by 1000
+
+  
+  BLOCK_OUTPUT(int32_t, output);         // The variable where the output stored
+  BLOCK_OUTPUT(int32_t, error);          // The variable where the error  stored
 
  private:
   // Internal state variables
@@ -56,21 +62,15 @@ class Controller_PID_FF : public Block {
    * @param Kff Feed-forward coefficient (multiplied by 1000).
    * @param limit The output limit.
    */
-  Controller_PID_FF(const int32_t& actual,
-                    const int32_t& reference,
-                    const int32_t& feedforward,
-                    const int32_t& Kp,
-                    const int32_t& Ki,
-                    const int32_t& Kd,
-                    const int32_t& Kff,
-                    const int32_t& limit)
+  ControllerPIDFF(const int32_t& actual,
+                  const int32_t& reference,
+                  const int32_t& feedforward,
+                  const int32_t& limit,
+                  const ControllerPIDFF_Setting& coefficients)
       : actual_(actual),
         reference_(reference),
         feedforward_(feedforward),
-        Kp_(Kp),
-        Ki_(Ki),
-        Kd_(Kd),
-        Kff_(Kff),
+        coef_(coefficients),
         limit_(limit) {}
 
   /**
@@ -81,24 +81,24 @@ class Controller_PID_FF : public Block {
   void tick() override;
 };
 
-void Controller_PID_FF::tick() {
+void ControllerPIDFF::tick() {
   // Calculate the error
   error_ = reference_ - actual_;
 
   // Calculate proportional term
-  int32_t P = (Kp_ * error_) / 1000;
+  int32_t P = (coef_.Kp * error_) / 1000;
 
   // Calculate integral term with anti-windup
   integral_ += error_;
   integral_ = constrain(integral_, INT32_MIN / 1000, INT32_MAX / 1000);
 
-  int32_t I = (Ki_ * integral_) / 1000;
+  int32_t I = (coef_.Ki * integral_) / 1000;
 
   // Calculate derivative term
-  int32_t D = (Kd_ * (error_ - previous_error_)) / 1000;
+  int32_t D = (coef_.Kd * (error_ - previous_error_)) / 1000;
 
   // Calculate feed-forward term
-  int32_t FF = (Kff_ * feedforward_) / 1000;
+  int32_t FF = (coef_.Kff * feedforward_) / 1000;
 
   // Calculate the output and apply the output limit
   int32_t raw_output = P + I + D + FF;
@@ -107,28 +107,5 @@ void Controller_PID_FF::tick() {
   // Update previous error
   previous_error_ = error_;
 }
-
-/*
-MACRO FOR INTELLISENSE THAT WILL HELP NOT TO MISPLACE VARIABLES
-*/
-
-/**
- * @brief PID Controller with Feed-Forward Correction
- * This class implements a PID controller with an additional feed-forward term.
- * Initializes a PIDController_FF class instance with specified parameters.
- * @param instance_name The unique name for the class instance.
- * @param reference The reference input value (setpoint).
- * @param feedforward The feed-forward input value.
- * @param actual The actual measured input value.
- * @param Kp Proportional control coefficient (multiplied by 1000).
- * @param Ki Integral control coefficient (multiplied by 1000).
- * @param Kd Derivative control coefficient (multiplied by 1000).
- * @param Kff Feed-forward control coefficient (multiplied by 1000).
- * @param output_limit The limit for the output value.
- */
-#define INIT_CONTROLLER_PID_FF(instance_name, reference, feedforward, actual, \
-                               Kp, Ki, Kd, Kff, output_limit)                 \
-  Controller_PID_FF instance_name((actual), (reference), (feedforward), (Kp), \
-                                  (Ki), (Kd), (Kff), (output_limit))
 
 #endif  // BLOCK_CONTROLLER_PID_FEEDFORWARD_H
