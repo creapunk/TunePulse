@@ -14,5 +14,9 @@
 #include "module_pwm_driver.h"
 #include "voltg_pattern_control/selector_interconnect_pwm.h"
 #include "voltg_pattern_control/selector_motor_type.h"
+#include "block_absolute_position.h"
+#include "voltage_estimation.h"
+#include "motion_plan_trapezoidal.h"
+#include "motion_plan_scurve.h"
 
 #endif  // BLOCK_LIB_H
