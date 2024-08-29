@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#include "target.h"
 #include "tunepulse.h"
 
 float a = 100.0;
@@ -16,36 +17,19 @@ float i = 0.001;
 static MotionPlanScurve motion1(e, f, g, h, i);
 
 void setup() {
-  tunepulse_init();
+    tunepulse_init();
 
-  MOTOR_CONTROL::resistance = 3500;                // Set motor phase resistance in mOhms
-  MOTOR_CONTROL::current_target_polar.rad = 1000;  // Set motor phase current in mA
-  
-  SerialUSB.begin();
-  
-  pinMode(PINOUT::LED_GRN, OUTPUT);
+    MOTOR_CONTROL::resistance = 3500;                // Set motor phase resistance in mOhms
+    MOTOR_CONTROL::current_target_polar.rad = 1000;  // Set motor phase current in mA
+
+    SerialUSB.begin();
+
+    pinMode(PINOUT::LED_GRN, OUTPUT);
 }
 
-
 void loop() {
-
-  motion0.tick();
-  SerialUSB.print(">0testVel:");
-  SerialUSB.println(motion0.get_current_vel());
-
-  SerialUSB.print(">0testPosition:");
-  SerialUSB.println(motion0.get_current_pos());
-  
-  motion1.tick();
-  SerialUSB.print(">1testAccel:");
-  SerialUSB.println(motion1.get_current_accel());
-
-  SerialUSB.print(">1testVel:");
-  SerialUSB.println(motion1.get_current_vel());
-
-  SerialUSB.print(">1testPosition:");
-  SerialUSB.println(motion1.get_current_pos());
-
-  delay(1);
-
+    MOTOR_CONTROL::lpf.tick();
+    MOTOR_CONTROL::filteredPos = MOTOR_CONTROL::lpf.get_output();
+    // MOTOR_CONTROL::positionHandler.tick();
+    delay(10);
 }

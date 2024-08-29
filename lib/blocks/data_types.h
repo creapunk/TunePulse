@@ -23,8 +23,8 @@ using VoltgChannelslNormlzd = int16_t[4];
  * (X / sin / D axis) and cosine (Y / B / Q axis) projections.
  */
 struct VectorAxes2D_I32 {
-  int32_t sin; /* SIN or Projection on X / sin / D axis */
-  int32_t cos; /* COS or Projection on Y / B / Q axis */
+    int32_t sin; /* SIN or Projection on X / sin / D axis */
+    int32_t cos; /* COS or Projection on Y / B / Q axis */
 } __attribute__((packed));
 
 /**
@@ -34,8 +34,8 @@ struct VectorAxes2D_I32 {
  * radius.
  */
 struct VectorPolar2D_I32 {
-  int32_t ang; /* Angle in Int1.31 format */
-  int32_t rad; /* Radius */
+    int32_t ang; /* Angle in Int1.31 format */
+    int32_t rad; /* Radius */
 } __attribute__((packed));
 
 /**
@@ -45,8 +45,8 @@ struct VectorPolar2D_I32 {
  * (X / sin / D axis) and cosine (Y / B / Q axis) projections.
  */
 struct VectorAxes2D_I16 {
-  int16_t sin; /* Projection on X / sin / D axis */
-  int16_t cos; /* Projection on Y / B / Q axis */
+    int16_t sin; /* Projection on X / sin / D axis */
+    int16_t cos; /* Projection on Y / B / Q axis */
 } __attribute__((packed));
 
 /**
@@ -54,25 +54,27 @@ struct VectorAxes2D_I16 {
  * @brief Union to represent absolute position in terms of angle and rotations.
  */
 union AbsPosition {
-  /**
-   * @struct
-   * @brief Structure to split position into angle and rotations.
-   */
-  struct {
-    uint16_t angle;      // Angle component of the position.
-    int16_t rotations;  // Rotations component of the position.
-  } split;
-  int32_t position;  // Combined 64-bit position value.
+    /**
+     * @struct
+     * @brief Structure to split position into angle and rotations.
+     */
+    struct {
+        uint16_t angle;     // Angle component of the position.
+        int16_t rotations;  // Rotations component of the position.
+    } split;
+    int32_t position;  // Combined 64-bit position value.
 
-  /**
-   * @brief Constructor to initialize the union.
-   * @param r Rotations value.
-   * @param a Angle value.
-   */
-  AbsPosition(int16_t r, int16_t a) {
-    split.rotations = r;
-    split.angle = a;
-  }
+    /**
+     * @brief Constructor to initialize the union.
+     * @param r Rotations value.
+     * @param a Angle value.
+     */
+    AbsPosition(int16_t r, int16_t a) {
+        split.rotations = r;
+        split.angle = a;
+    }
 };
+
+
 
 #endif  // DATA_TYPES_H

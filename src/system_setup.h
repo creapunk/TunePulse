@@ -33,6 +33,8 @@ inline void PWM_Callback() {
 inline void ENCODER_Callback() {
     MOTOR_CONTROL::position_raw = POSITION_ENCODER;
     MOTOR_CONTROL::positionHandler.tick();
+    // MOTOR_CONTROL::lpf.tick();
+    // MOTOR_CONTROL::filteredPos = MOTOR_CONTROL::lpf.get_output();
 }
 
 inline void ANALOG_Callback() {

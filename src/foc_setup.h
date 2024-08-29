@@ -46,6 +46,12 @@ uint16_t position_raw = UINT16_MAX / 2;
 uint16_t frequency = 16000;
 BlockAbsolutePosition positionHandler(position_raw, pos_offset, frequency);
 
+uint8_t alpha = 220;
+
+Filter_LPF_Overflow lpf(positionHandler.get_position_inst().split.angle, alpha);
+uint16_t filteredPos = 0;
+
+
 }  // namespace MOTOR_CONTROL
 
 #endif  // FOC_SYSTEM_SETUP_H
