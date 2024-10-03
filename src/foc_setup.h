@@ -3,54 +3,95 @@
 
 #include "blocks_lib.h"
 
+// Structure to hold system setup configurations
 struct SystemSetup {
-    CurrentControlMode currentMode;
-    PatternPWM connectionMode;
-    ModePWM pwmMode;
-    MotorType motorMode;
+    CurrentControlMode currentMode;  // Current control mode
+    PatternPWM connectionMode;       // PWM connection pattern
+    ModePWM pwmMode;                 // PWM operating mode
+    MotorType motorMode;             // Type of motor
 };
+
 
 namespace MOTOR_CONTROL {
 // Variables for motor and PWM configuration
+int32_t resistance = 3500;      // Motor resistance in ohms
+int16_t pwm_resolution = 2625;  // PWM resolution
+constexpr int32_t MAX_SUPPLY_VOLTAGE = 69000;
 
-SystemSetup setup = {.currentMode = VOLTAGE_EST, .connectionMode = ABCD, .pwmMode = ALLIGNED_GND, .motorMode = STEPPER};
+// Initialize system setup with specific modes
+SystemSetup setup = {
+    .currentMode = VOLTAGE_EST,  // Set current control mode to voltage estimation
+    .connectionMode = ABCD,      // Set PWM connection mode to ABCD
+    .pwmMode = ALLIGNED_GND,     // Set PWM mode to aligned with ground
+    .motorMode = STEPPER         // Set motor type to stepper
+};
 
-VectorAxes2D_I32 voltage_target_mv = {.sin = 0, .cos = 0};      // temporary
-VectorPolar2D_I32 current_target_polar = {.ang = 0, .rad = 0};  // current vector
-VectorAxes2D_I32 current_target_real = {.sin = 0, .cos = 0};    // temporary
+// Initialize ADC channels
+AdcChannels adc_channels = {0};  // ADC channels configuration
 
-int32_t resistance = 3500;
-int16_t pwm_resolution = 2625;
+// Normalize ADC with calibrated reference voltage
+NormalizeADC<SENSOR_CONFIG_ADC::CH1_CH2> adc_normilizer(
+    VREF_CALC_CALIBRATED(3300, *VREFINT_CAL_ADDR, 3000, 12),  // Calibrated reference voltage
+    adc_channels                                              // ADC channels to normalize
+);
 
-VoltageContainer voltg_container = {.voltg_norm = 580, .voltg_mv = 12000, .max_sup_voltage = 69000};
+// Filter constant for supply voltage
+uint8_t KfilterVSup = 240;  // Filter constant for supply voltage
 
-ControllerPIDFF_Setting pid_settgs = {0, 0, 0, 0};  // temp
+// Initialize supply voltage with normalized voltage and filter settings
+SupplyVoltage supply(adc_normilizer.get_vsup(),  // Get supply voltage from ADC normalizer
+                     KfilterVSup,                // Filter constant
+                     MAX_SUPPLY_VOLTAGE          // Maximum supply value for voltage divider by HW design
+);
 
-CurrentVectorPWM currntVectorController(setup.currentMode,
-                                        voltage_target_mv,
-                                        current_target_polar,
-                                        current_target_real,
-                                        resistance,
-                                        voltg_container,
-                                        pid_settgs);
+// PID controller settings (temporary)
+ControllerPIDFF_Setting pid_settgs = {0, 0, 0, 0};  // PID settings initialized to zero
 
-SelectorMotorType motor_sel(setup.motorMode, currntVectorController.get_voltg_I16(), voltg_container.voltg_norm, INT16_MIN);
+// Target voltage in millivolts (temporary)
+VectorAxes2D_I32 voltage_target_mv = {.sin = 0, .cos = 0};  // Voltage target vector components
 
-SelectorInterconnectPwm pwm_mux(setup.connectionMode, motor_sel.getPwmChannels());
+// Current target in polar coordinates
+VectorPolar2D_I32 current_target_polar = {.ang = 0, .rad = 0};  // Current target angle and magnitude
 
-ModuleDriverPWM pwm(setup.pwmMode, pwm_resolution, voltg_container.voltg_norm, pwm_mux.getPwmChannels());
+// Real current target in axes coordinates (temporary)
+VectorAxes2D_I32 current_target_real = {.sin = 0, .cos = 0};  // Real current target vector components
 
-AbsPosition pos_offset(0, 0);
+// Initialize current vector controller with system setup and targets
+ControllerCurrentVector currntVectorController(setup.currentMode,            // Current control mode
+                                               voltage_target_mv,            // Voltage target vector
+                                               current_target_polar,         // Current target in polar coordinates
+                                               current_target_real,          // Real current target vector
+                                               resistance,                   // Motor resistance
+                                               supply.get_voltage_norm(),    // Normalized supply voltage
+                                               supply.get_max_voltage_mv(),  // Maximum supply voltage in millivolts
+                                               pid_settgs                    // PID controller settings
+);
 
-uint16_t position_raw = UINT16_MAX / 2;
-uint16_t frequency = 16000;
-BlockAbsolutePosition positionHandler(position_raw, pos_offset, frequency);
 
-uint8_t alpha = 220;
+Motor motor(currntVectorController.get_voltg_I16(), supply.get_voltage_norm(), adc_normilizer.get_current1234());
 
-Filter_LPF_Overflow lpf(positionHandler.get_position_inst().split.angle, alpha);
-uint16_t filteredPos = 0;
 
+// Initialize PWM module with setup configurations
+ModuleDriverPWM pwm(setup.pwmMode,              // PWM mode from setup
+                    pwm_resolution,             // PWM resolution
+                    supply.get_voltage_norm(),  // Normalized supply voltage
+                    motor.getPwmChannels()    // PWM channels from PWM selector
+);
+
+// Absolute position offset initialization
+AbsPosition pos_offset(0, 0);  // Position offset set to zero
+
+// Raw position and frequency for encoder
+uint16_t position_raw = UINT16_MAX / 2;  // Raw position initialized to half of maximum unsigned 16-bit value
+uint16_t frequency = 16000;              // Encoder frequency set to 16,000 Hz
+
+// Initialize encoder position handler with raw position, offset, and frequency
+EncoderPositionHandler positionHandler(position_raw,  // Raw encoder position
+                                       pos_offset,    // Position offset
+                                       frequency      // Encoder frequency
+);
+
+int32_t speed_incr = 8000000;
 
 }  // namespace MOTOR_CONTROL
 

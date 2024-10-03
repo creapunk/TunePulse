@@ -1,7 +1,7 @@
 #ifndef TUNEPULSE_H
 #define TUNEPULSE_H
 
-#include "interrupt_setup.h"
+#include "setup\interrupt_setup.h"
 
 inline void tunepulse_init() {
     IO_Init();

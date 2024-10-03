@@ -1,7 +1,7 @@
 #ifndef MOTION_PLAN_SCURVE_H
 #define MOTION_PLAN_SCURVE_H
 
-#include "generic_block.h"
+#include "common\generic_block.h"
 
 /**
  * @brief Creates a scurve motion profile.
@@ -279,4 +279,4 @@ void MotionPlanScurve::tick() {
     current_time_ = time;
 }
 
-#endif MOTION_PLAN_SCURVE_H
+#endif 

@@ -13,7 +13,7 @@
 #ifndef BLOCK_ROTATE_VECTOR_SIN_COS_H
 #define BLOCK_ROTATE_VECTOR_SIN_COS_H
 
-#include "generic_block.h"
+#include "..\common\generic_block.h"
 
 /**
  * @brief Rotate Coordinates

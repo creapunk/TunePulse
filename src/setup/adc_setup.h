@@ -118,17 +118,18 @@ void ADC_Init() {
     MX_ADC1_Start();
 }
 
+
 // Depends on sensor type
-void ADC_get_values(int16_t& current_a,
-                    int16_t& current_b,
-                    int16_t& voltage_supply,
-                    int16_t& voltage_vref,
-                    int16_t& voltage_temp) {
-    current_a = dma_buffer[0] >> 1;       // uint16->int16
-    current_b = dma_buffer[1] >> 1;       // uint16->int16
-    voltage_supply = dma_buffer[2] >> 1;  // uint16->int16
-    voltage_vref = dma_buffer[3] >> 1;    // uint16->int16
-    voltage_temp = dma_buffer[4] >> 1;    // uint16->int16
+void ADC_get_values(uint16_t& current_a,
+                    uint16_t& current_b,
+                    uint16_t& voltage_supply,
+                    uint16_t& voltage_vref,
+                    uint16_t& voltage_temp) {
+    current_a = dma_buffer[0];       // uint16->int16
+    current_b = dma_buffer[1];       // uint16->int16
+    voltage_supply = dma_buffer[2];  // uint16->int16
+    voltage_vref = dma_buffer[3];    // uint16->int16
+    voltage_temp = dma_buffer[4];    // uint16->int16
 }
 
 #endif  // ADC_SETUP_H

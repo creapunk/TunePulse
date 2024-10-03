@@ -8,13 +8,24 @@
 
 #include <inttypes.h>
 
-/**
- * @typedef VoltgChannelslNormlzd
- * @brief An array to store normalized phase voltages.
- * This type defines an array of four 16-bit integers representing the normalized phase
- * voltages.
- */
-using VoltgChannelslNormlzd = int16_t[4];
+using VoltageADC = uint16_t;
+
+using VoltageNZ = int16_t;
+
+using VoltageMV = int32_t;
+
+using VoltgChannelslNZ = VoltageNZ[4];
+
+
+using CurrentADC = uint16_t;
+
+using CurrentNZ = int16_t;
+
+using CurrentMA = int32_t;
+
+using ChCurrentNZ = VoltageNZ[4];
+
+
 
 /**
  * @struct VectorAxes2D_I32
@@ -74,7 +85,5 @@ union AbsPosition {
         split.angle = a;
     }
 };
-
-
 
 #endif  // DATA_TYPES_H

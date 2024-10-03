@@ -3,22 +3,33 @@
 
 #include "Arduino.h"
 
-#include "block_absolute_position.h"
-#include "controller_current.h"
-#include "controller_pid_feedforward.h"
-#include "current_vector_pwm.h"
-#include "driver_voltage_sense.h"
-#include "math_rotate_vector_sin_cos.h"
-#include "math_static.h"
-#include "math_trigonometry.h"
-#include "module_pwm_driver.h"
+// Handles encoder position
+#include "position_control/position_handler.h"
+
+// Current vector control
+#include "controller_current_vector.h"
+
+// PWM control
 #include "voltg_pattern_control/selector_interconnect_pwm.h"
 #include "voltg_pattern_control/selector_motor_type.h"
-#include "block_absolute_position.h"
-// #include "voltage_estimation.h"
+#include "module_pwm_driver.h"
+#include "motor.h"
+
+// Motion planning
 #include "motion_plan_trapezoidal.h"
 #include "motion_plan_scurve.h"
 
-#include "filters\filter_lpf.h"
+// Math
+#include "math\math_rotate_vector_sin_cos.h"
+#include "math\math_static.h"
+#include "math\math_trigonometry.h"
+
+// ADC and supply handling
+#include "analog/normalize_adc.h"
+#include "analog/supply_voltage.h"
+
+// Helpers
+#include "filtration\filter_lpf.h"
+#include "controller_pid_feedforward.h"
 
 #endif  // BLOCK_LIB_H

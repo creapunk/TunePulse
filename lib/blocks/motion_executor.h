@@ -1,7 +1,7 @@
 #ifndef MOTION_EXECUTOR_H
 #define MOTION_EXECUTOR_H
 
-#include "generic_block.h"
+#include "common\generic_block.h"
 
 struct MotionTask {
     float position;  // keeps accounted how far has been traveled

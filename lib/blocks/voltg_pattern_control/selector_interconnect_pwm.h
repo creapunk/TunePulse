@@ -44,7 +44,7 @@
  *
  * // Define your PWM mode and input channels
  * PatternPWM mode = PatternPWM::ABCD;
- * VoltgChannelslNormlzd inputChannels = { // initialize with values // };
+ * VoltgChannelslNZ inputChannels = { // initialize with values // };
  *
  * // Create instance of SelectorInterconnectPwm
  * SelectorInterconnectPwm pwmSelector(mode, inputChannels);
@@ -53,48 +53,44 @@
  * pwmSelector.tick();
  *
  * // Retrieve the current PWM channels
- * const VoltgChannelslNormlzd& pwmChannels = pwmSelector.getPwmChannels();
+ * const VoltgChannelslNZ& pwmChannels = pwmSelector.getPwmChannels();
  * @endcode
  */
 
 #ifndef SELECTOR_INTERCONNECT_PWM_H
 #define SELECTOR_INTERCONNECT_PWM_H
 
-#include "../control_modes.h"
-#include "../data_types.h"
+#include "..\common\control_modes.h"
+#include "..\common\data_types.h"
 
 class SelectorInterconnectPwm {
- private:
-  const VoltgChannelslNormlzd&
-      chABCD_;              ///< Reference to the array containing ABCD channels
-  const PatternPWM& mode_;  ///< Reference to the current mode
-  VoltgChannelslNormlzd output = {
-      INT16_MIN};  ///< Array to store the current output pattern
+private:
+    const VoltgChannelslNZ& chABCD_;        ///< Reference to the array containing ABCD channels
+    const PatternPWM& mode_;                ///< Reference to the current mode
+    VoltgChannelslNZ output = {INT16_MIN};  ///< Array to store the current output pattern
 
- public:
-  /**
-   * @brief Constructor for SelectorInterconnectPwm.
-   * @param mode Reference to the current mode.
-   * @param chABCD Reference to the input array containing PWM channels.
-   */
-  constexpr SelectorInterconnectPwm(const PatternPWM& mode,
-                                    const VoltgChannelslNormlzd& chABCD)
-      : mode_(mode), chABCD_(chABCD) {}
+public:
+    /**
+     * @brief Constructor for SelectorInterconnectPwm.
+     * @param mode Reference to the current mode.
+     * @param chABCD Reference to the input array containing PWM channels.
+     */
+    constexpr SelectorInterconnectPwm(const PatternPWM& mode, const VoltgChannelslNZ& chABCD) : mode_(mode), chABCD_(chABCD) {}
 
-  /**
-   * @brief Updates the output pattern based on the current mode.
-   */
-  void tick() {
-    for (uint8_t i = 0; i < 4; i++) {
-      output[i] = chABCD_[(mode_ >> (i * 2)) & 0b11];
+    /**
+     * @brief Updates the output pattern based on the current mode.
+     */
+    void tick() {
+        for (uint8_t i = 0; i < 4; i++) {
+            output[i] = chABCD_[(mode_ >> (i << 1)) & 0b11];
+        }
     }
-  }
 
-  /**
-   * @brief Returns the current PWM channels.
-   * @return Reference to the array of current PWM channels.
-   */
-  const VoltgChannelslNormlzd& getPwmChannels() const { return output; }
+    /**
+     * @brief Returns the current PWM channels.
+     * @return Reference to the array of current PWM channels.
+     */
+    const VoltgChannelslNZ& getPwmChannels() const { return output; }
 };
 
 #endif  // SELECTOR_INTERCONNECT_PWM_H

@@ -20,16 +20,17 @@ void setup() {
     tunepulse_init();
 
     MOTOR_CONTROL::resistance = 3500;                // Set motor phase resistance in mOhms
-    MOTOR_CONTROL::current_target_polar.rad = 1000;  // Set motor phase current in mA
+    MOTOR_CONTROL::current_target_polar.rad = 500;  // Set motor phase current in mA
 
     SerialUSB.begin();
 
     pinMode(PINOUT::LED_GRN, OUTPUT);
 }
 
+
 void loop() {
-    MOTOR_CONTROL::lpf.tick();
-    MOTOR_CONTROL::filteredPos = MOTOR_CONTROL::lpf.get_output();
-    // MOTOR_CONTROL::positionHandler.tick();
+
+    
+
     delay(10);
 }

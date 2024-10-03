@@ -1,7 +1,7 @@
 #ifndef MATH_TRIGONOMETRY_H
 #define MATH_TRIGONOMETRY_H
 
-#include "data_types.h"
+#include "..\common\data_types.h"
 
 constexpr int16_t sine_quarter_wave[256] = {
     0x0000, 0x00C9, 0x0193, 0x025D, 0x0327, 0x03F1, 0x04BA, 0x0584, 0x064E, 0x0717,

@@ -16,7 +16,7 @@
 #ifndef BLOCK_CONTROLLER_PID_FEEDFORWARD_H
 #define BLOCK_CONTROLLER_PID_FEEDFORWARD_H
 
-#include "generic_block.h"
+#include "common\generic_block.h"
 
 struct ControllerPIDFF_Setting {
   int16_t Kp;

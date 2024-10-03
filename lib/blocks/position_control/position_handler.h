@@ -1,28 +1,26 @@
 #ifndef BLOCK_ABSOLUTE_POSITION_H
 #define BLOCK_ABSOLUTE_POSITION_H
 
-#include "filters/filter_lpf.h"
-#include "generic_block.h"
+#include "..\common\generic_block.h"
+
+#include "position_filter.h"
+#include "speed_estimator.h"
 
 /**
- * @class BlockAbsolutePosition
+ * @class EncoderPositionHandler
  * @brief Class to manage and calculate absolute position.
  */
-class BlockAbsolutePosition {
-    BLOCK_INPUT(uint16_t, angle_raw);      // Raw angle input.
+class EncoderPositionHandler {
     BLOCK_INPUT(AbsPosition, pos_offset);  // Position offset input.
-    BLOCK_INPUT(uint16_t, freq);           // Frequency input.
 
     BLOCK_OUTPUT(AbsPosition, position_raw);   // Raw position output.
     BLOCK_OUTPUT(AbsPosition, position_inst);  // Instantaneous position output.
-    BLOCK_OUTPUT(int32_t, speed_inst);         // Instantaneous speed output.
-
-    uint8_t alpha = 200;
-    Filter_LPF_Overflow lpf;
 
 protected:
+    uint8_t alpha = 200;
+    SpeedEstimator<8> speedEst; // Speed estimator with buffer size 8
+    PositionFilter filter;
     uint8_t angle_prev_ = 2;  // Previous angle value for zero-crossing detection.
-    int32_t position_prev = 0;
     uint16_t angle_;
     /**
      * @brief Detects zero crossings in angle values and updates the rotation count corresponding to direction.
@@ -36,34 +34,33 @@ public:
      * @param pos_offset Reference to position offset input.
      * @param freq Reference to frequency input.
      */
-    BlockAbsolutePosition(const uint16_t& raw_angle, const AbsPosition& pos_offset, const uint16_t& freq)
-        : angle_raw_(raw_angle),
-          pos_offset_(pos_offset),
-          freq_(freq),
+    EncoderPositionHandler(const uint16_t& raw_angle, const AbsPosition& pos_offset, const uint16_t& freq)
+        : pos_offset_(pos_offset),
           position_raw_(0, 0),
           position_inst_(0, 0),
-          lpf(raw_angle, alpha) {}
+          filter(raw_angle, alpha), // Position filtration to reduce noise and smooth transients
+          speedEst(position_raw_.position, freq) // Instant speed estimator
+           {}
 
     /**
      * @brief Function to update the block's state.
      */
     void tick() {
-        lpf.tick();
-        angle_ = lpf.get_output();
-
-        position_prev = position_raw_.position;  // Memorizing the current position
+        filter.tick();
+        angle_ = filter.get_output();
 
         angleZCD();  // Updating the position with detection of zero crossing
 
-        // Calculate the position difference and multiply by dt
-        speed_inst_ = (position_raw_.position - position_prev) * freq_;
+        speedEst.tick();
 
         // Update current position with offset correction
         position_inst_.position = position_raw_.position + pos_offset_.position;
     }
+
+    const int32_t& get_speed_inst() const { return speedEst.get_speed(); }
 };
 
-inline void BlockAbsolutePosition::angleZCD() {
+inline void EncoderPositionHandler::angleZCD() {
     /* This function monitors zero crossings in angular positions, updating rotations
      * using the two most significant bits (sectors) for quick comparison.
      * WARNING! Ensure the algorithm runs at least 5 times per full rotation */

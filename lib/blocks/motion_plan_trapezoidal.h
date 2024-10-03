@@ -1,7 +1,7 @@
 #ifndef MOTION_PLAN_TRAPEZOIDAL_H
 #define MOTION_PLAN_TRAPEZOIDAL_H
 
-#include "generic_block.h"
+#include "common\generic_block.h"
 
 /**
  * @brief Creates a Triangular motion profile.
@@ -155,4 +155,4 @@ void MotionPlanTrapezoidal::tick() {
 
 
 
-#endif MOTION_PLAN_TRAPEZOIDAL_H
+#endif 
